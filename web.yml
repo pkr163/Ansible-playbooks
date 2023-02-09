@@ -1,0 +1,22 @@
+---
+- name: Configure Web Tier
+  hosts: web
+  become: yes
+  roles:
+    - common
+    - web
+
+- name: Start web server
+  hosts: web
+  become: yes
+  tasks:
+    - name: Install web server
+      package:
+        name: apache2
+        state: present
+
+    - name: Start Apache2 service
+      service:
+        name: apache2
+        state: started
+        enabled: yes
