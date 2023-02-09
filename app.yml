@@ -1,0 +1,40 @@
+---
+- name: Configure Application Tier
+  hosts: app
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Install required packages
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - python3
+        - python3-pip
+        - gunicorn
+        
+    - name: Install application dependencies
+      pip:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - flask
+        - psycopg2-binary
+
+    - name: Copy application code
+      copy:
+        src: /path/to/app
+        dest: /opt/app
+
+    - name: Configure application service
+      template:
+        src: app_service.j2
+        dest: /etc/systemd/system/app.service
+      notify:
+        - restart application service
+
+  handlers:
+    - name: restart application service
+      service:
+        name: app
+        state: restarted
