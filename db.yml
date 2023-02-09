@@ -1,0 +1,29 @@
+---
+- name: Configure Database Tier
+  hosts: db
+  become: yes
+  gather_facts: yes
+  tasks:
+    - name: Install database software
+      package:
+        name: mariadb-server
+        state: present
+
+    - name: Start and enable database service
+      service:
+        name: mariadb
+        state: started
+        enabled: yes
+
+    - name: Configure database
+      template:
+        src: db_config.j2
+        dest: /etc/my.cnf.d/db_config.cnf
+      notify:
+        - restart database service
+
+  handlers:
+    - name: restart database service
+      service:
+        name: mariadb
+        state: restarted
