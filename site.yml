@@ -1,0 +1,9 @@
+---
+- name: Configure Multi-Tier Architecture
+  hosts: all
+  become: yes
+  gather_facts: yes
+  roles:
+    - role: web
+    - role: app
+    - role: db
